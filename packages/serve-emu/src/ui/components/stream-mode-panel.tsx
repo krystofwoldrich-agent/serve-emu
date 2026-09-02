@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
+  isGrpcStreamMode,
   STREAM_MODES,
   type StreamMode,
   type StreamModeResponse,
@@ -18,9 +19,13 @@ const OPTION_COPY = {
     label: "scrcpy",
     description: "On-device capture",
   },
+  "grpc-stream": {
+    label: "gRPC stream",
+    description: "Server-pushed emulator frames",
+  },
   "grpc-screenshot": {
-    label: "gRPC screenshot",
-    description: "Emulator host capture",
+    label: "gRPC screenshot (legacy)",
+    description: "Alias for gRPC stream",
   },
 } satisfies Record<StreamMode, {
   label: string;
@@ -153,7 +158,7 @@ export function StreamModePanel() {
     [busy, loaded, refresh, selectionReady],
   );
 
-  const grpcAvailable = availableModes.includes("grpc-screenshot");
+  const grpcAvailable = availableModes.some(isGrpcStreamMode);
   const help = busy || deviceSession.transitioning
     ? "Changing the stream source and reconnecting the browser stream…"
     : !selectionReady
@@ -161,9 +166,11 @@ export function StreamModePanel() {
         ? "Checking the available stream sources…"
         : "Stream source details are unavailable."
       : !grpcAvailable
-        ? "gRPC screenshot is available only for Android Emulator devices."
-        : loaded.mode === "grpc-screenshot"
-          ? "Frames and input use the emulator host gRPC endpoint."
+        ? "gRPC streaming is available only for Android Emulator devices."
+        : loaded.mode === "grpc-stream"
+          ? "Frames are pushed by streamScreenshot and encoded to H.264 on the emulator host."
+          : loaded.mode === "grpc-screenshot"
+            ? "Compatibility alias: this uses the same server-pushed streamScreenshot capture."
           : "Frames and input use the scrcpy server on the device.";
 
   return (

@@ -45,7 +45,7 @@ function abortReason(signal: AbortSignal, fallback: string): Error {
 /**
  * State whose lifetime belongs to an Android device, not to one video source.
  *
- * A scrcpy/grpc-screenshot transition briefly has two owners while the new
+ * A scrcpy/gRPC stream transition briefly has two owners while the new
  * source is staged. Publishing the candidate moves the replay input target;
  * releasing the old source therefore cannot close recording, route, location,
  * or logcat state. The resources close only after the final owner releases.

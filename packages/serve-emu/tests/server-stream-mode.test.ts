@@ -144,7 +144,7 @@ describe("server stream source switching", () => {
       ok: true,
       serial: "emulator-5554",
       mode: "scrcpy",
-      availableModes: ["scrcpy", "grpc-screenshot"],
+      availableModes: ["scrcpy", "grpc-screenshot", "grpc-stream"],
       sessionGeneration: 0,
     });
 

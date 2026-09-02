@@ -6,7 +6,10 @@ import {
   type StartOpts,
   type VideoPacket,
 } from "./scrcpy.ts";
-import type { StreamMode } from "./shared/api-contracts.ts";
+import {
+  isGrpcStreamMode,
+  type StreamMode,
+} from "./shared/api-contracts.ts";
 import { isAbnormalExit, procExitDetail } from "./session-status.ts";
 
 export type StreamFailure = {
@@ -50,7 +53,7 @@ export type GrpcCaptureDiagnostics = {
 };
 
 export type EmuSessionDiagnostics = {
-  /** Present only for the grpc-screenshot capture implementation. */
+  /** Present only for the gRPC streamScreenshot capture implementation. */
   grpcCapture?: GrpcCaptureDiagnostics;
 };
 
@@ -77,16 +80,25 @@ export type StartEmuSessionOptions = StartOpts & {
   mode: StreamMode;
 };
 
+export type StartEmuSessionDependencies = {
+  /** Test/embedding seam for the emulator-controller capture adapter. */
+  startGrpcSession?: typeof startGrpcSession;
+};
+
 export async function startEmuSession(
   options: StartEmuSessionOptions,
+  dependencies: StartEmuSessionDependencies = {},
 ): Promise<EmuSession> {
-  if (options.mode === "grpc-screenshot") {
+  if (isGrpcStreamMode(options.mode)) {
     if (!/^emulator-\d+$/.test(options.serial)) {
       throw new Error(
-        `grpc-screenshot requires an Android Emulator serial; received ${options.serial}`,
+        `${options.mode} requires an Android Emulator serial; received ${options.serial}`,
       );
     }
-    return startGrpcSession(options);
+    return (dependencies.startGrpcSession ?? startGrpcSession)({
+      ...options,
+      mode: options.mode,
+    });
   }
   if (options.mode !== "scrcpy") {
     const exhaustive: never = options.mode;

@@ -35,6 +35,7 @@ const routeSnapshot = {
 describe("API contracts", () => {
   test("recognizes only supported stream modes", () => {
     expect(isStreamMode("scrcpy")).toBe(true);
+    expect(isStreamMode("grpc-stream")).toBe(true);
     expect(isStreamMode("grpc-screenshot")).toBe(true);
     expect(isStreamMode("screen-copy")).toBe(false);
     expect(isStreamMode(null)).toBe(false);

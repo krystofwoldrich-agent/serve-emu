@@ -1,8 +1,8 @@
-import { parseGesture, type Gesture } from "./control-contracts";
+import { parseGesture, type Gesture } from "./control-contracts.ts";
 import type {
   StreamSettings,
   WebRtcIceServer,
-} from "../stream-settings";
+} from "../stream-settings.ts";
 
 /** Stable error codes sent by every JSON API failure. */
 export const API_ERROR_CODES = [
@@ -69,13 +69,25 @@ export type DeviceSelectionResponse = ApiSuccess<{
   device: string;
 }>;
 
-export const STREAM_MODES = ["scrcpy", "grpc-screenshot"] as const;
+export const STREAM_MODES = [
+  "scrcpy",
+  // v0 compatibility alias: this selects the same streamScreenshot pipeline.
+  "grpc-screenshot",
+  "grpc-stream",
+] as const;
 export type StreamMode = (typeof STREAM_MODES)[number];
+export type GrpcStreamMode = Extract<
+  StreamMode,
+  "grpc-stream" | "grpc-screenshot"
+>;
 export function isStreamMode(value: unknown): value is StreamMode {
   return (
     typeof value === "string" &&
     STREAM_MODES.some((mode) => mode === value)
   );
+}
+export function isGrpcStreamMode(value: unknown): value is GrpcStreamMode {
+  return value === "grpc-stream" || value === "grpc-screenshot";
 }
 export type StreamModeResponse = ApiSuccess<{
   serial: string;

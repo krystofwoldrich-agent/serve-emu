@@ -1,6 +1,9 @@
 import type { ApiDependencies } from "../dependencies.ts";
 import type { ContractApiRoute } from "./types.ts";
-import { isStreamMode } from "../../shared/api-contracts.ts";
+import {
+  isStreamMode,
+  STREAM_MODES,
+} from "../../shared/api-contracts.ts";
 import {
   downstream,
   invalid,
@@ -27,7 +30,7 @@ export function deviceRoutes(): ContractApiRoute<ApiDependencies>[] {
         const body = await readObject(request, "stream mode payload");
         const mode = body.mode;
         if (!isStreamMode(mode)) {
-          invalid("mode must be scrcpy or grpc-screenshot");
+          invalid(`mode must be one of: ${STREAM_MODES.join(", ")}`);
         }
         return Response.json(
           await downstream("switch stream mode", () => deps.setStreamMode(mode)),

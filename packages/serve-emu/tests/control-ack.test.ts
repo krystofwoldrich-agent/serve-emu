@@ -46,13 +46,13 @@ describe("browser control acknowledgements", () => {
   test("logs negative acknowledgements through the error console path", () => {
     const errors: string[] = [];
     const logged = logControlAcknowledgement(
-      '{"ok":false,"error":"grpc-screenshot supports ASCII text only"}',
+      '{"ok":false,"error":"Emulator gRPC capture supports ASCII text only"}',
       (message) => errors.push(message),
     );
 
     expect(logged).toBe(true);
     expect(errors).toEqual([
-      "serve-emu control input rejected: grpc-screenshot supports ASCII text only",
+      "serve-emu control input rejected: Emulator gRPC capture supports ASCII text only",
     ]);
     expect(logControlAcknowledgement('{"ok":true}', (message) => errors.push(message))).toBe(false);
     expect(errors).toHaveLength(1);

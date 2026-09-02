@@ -596,22 +596,22 @@ describe("createRouter stream mode", () => {
       ok: true,
       serial: "emulator-5554",
       mode: "scrcpy",
-      availableModes: ["scrcpy", "grpc-screenshot"],
+      availableModes: ["scrcpy", "grpc-screenshot", "grpc-stream"],
       sessionGeneration: 0,
     });
 
     const switched = await router.handleRequest(
-      put("/api/stream-mode", { mode: "grpc-screenshot" }),
+      put("/api/stream-mode", { mode: "grpc-stream" }),
     );
     expect(switched.status).toBe(200);
     expect(await responseJson(switched)).toEqual({
       ok: true,
       serial: "emulator-5554",
-      mode: "grpc-screenshot",
-      availableModes: ["scrcpy", "grpc-screenshot"],
+      mode: "grpc-stream",
+      availableModes: ["scrcpy", "grpc-screenshot", "grpc-stream"],
       sessionGeneration: 1,
     });
-    expect(state.createdModes).toEqual(["scrcpy", "grpc-screenshot"]);
+    expect(state.createdModes).toEqual(["scrcpy", "grpc-stream"]);
     expect(state.stopped).toEqual(["emulator-5554"]);
 
     await router.stopAll();

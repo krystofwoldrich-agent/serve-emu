@@ -67,6 +67,7 @@ import {
   type ScrcpySession,
 } from "./scrcpy.ts";
 import {
+  isGrpcStreamMode,
   STREAM_MODES,
   type StreamMode,
   type StreamModeResponse,
@@ -2309,9 +2310,9 @@ export function createRouter(
         ) {
           throw new Error(`mode must be one of: ${STREAM_MODES.join(", ")}`);
         }
-        if (mode === "grpc-screenshot" && !/^emulator-\d+$/.test(serial)) {
+        if (isGrpcStreamMode(mode) && !/^emulator-\d+$/.test(serial)) {
           throw new Error(
-            "grpc-screenshot is only available for Android Emulator devices",
+            `${mode} is only available for Android Emulator devices`,
           );
         }
         streamMode = mode as StreamMode;

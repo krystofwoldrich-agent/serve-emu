@@ -34,6 +34,7 @@ import {
   type VideoFrame,
   type VideoPacket,
 } from "./scrcpy.ts";
+import type { GrpcStreamMode } from "./shared/api-contracts.ts";
 import type {
   EmuSession,
   GrpcCaptureDiagnostics,
@@ -248,7 +249,7 @@ function modifierKeyRequests(metaState: number): KeyboardEventRequest[] {
   const unsupported = metaState & ~SUPPORTED_ANDROID_META_MASK;
   if (unsupported !== 0) {
     throw new ControlInputRejectedError(
-      `grpc-screenshot cannot encode Android key metaState bits 0x${unsupported.toString(16)}`,
+      `Emulator gRPC capture cannot encode Android key metaState bits 0x${unsupported.toString(16)}`,
     );
   }
 
@@ -410,7 +411,7 @@ export function androidKeyGestureToKeyboardEvents(
         : null;
   if (!key) {
     throw new ControlInputRejectedError(
-      `Android keycode ${gesture.keycode} is unsupported by grpc-screenshot`,
+      `Android keycode ${gesture.keycode} is unsupported by emulator gRPC capture`,
     );
   }
 
@@ -705,7 +706,7 @@ export function normalizeGrpcText(text: string): string {
   for (let index = 0; index < text.length; index++) {
     if (text.charCodeAt(index) > 0x7f) {
       throw new ControlInputRejectedError(
-        "grpc-screenshot supports ASCII text only",
+        "Emulator gRPC capture supports ASCII text only",
       );
     }
   }
@@ -887,7 +888,7 @@ function nonNegativeInteger(
  * packet contract as scrcpy.
  */
 export async function startGrpcSession(
-  options: StartOpts,
+  options: StartOpts & { mode: GrpcStreamMode },
   dependencies: GrpcSessionDependencies = {},
 ): Promise<EmuSession> {
   const serial = options.serial;
@@ -930,7 +931,7 @@ export async function startGrpcSession(
 
   if (!/^emulator-\d+$/.test(serial)) {
     throw new Error(
-      `grpc-screenshot requires an Android Emulator serial; received ${serial}`,
+      `${options.mode} requires an Android Emulator serial; received ${serial}`,
     );
   }
   const lifetime = new AbortController();
@@ -1548,7 +1549,7 @@ export async function startGrpcSession(
     };
     sessionMeta = meta;
     return {
-      mode: "grpc-screenshot",
+      mode: options.mode,
       serial,
       meta,
       controls,

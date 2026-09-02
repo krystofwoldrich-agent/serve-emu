@@ -13,12 +13,14 @@ describe("StreamModePanel", () => {
     expect(markup).toContain('aria-describedby="stream-mode-help"');
     expect(markup).toContain('<legend class="visually-hidden">Stream source</legend>');
     expect(markup).toContain('type="radio"');
-    expect(markup.match(/type="radio"/g)?.length).toBe(2);
-    expect(markup.match(/disabled=""/g)?.length).toBe(2);
+    expect(markup.match(/type="radio"/g)?.length).toBe(3);
+    expect(markup.match(/disabled=""/g)?.length).toBe(3);
     expect(markup).toContain('value="scrcpy"');
+    expect(markup).toContain('value="grpc-stream"');
     expect(markup).toContain('value="grpc-screenshot"');
     expect(markup).toContain("On-device capture");
-    expect(markup).toContain("Emulator host capture");
+    expect(markup).toContain("Server-pushed emulator frames");
+    expect(markup).toContain("Alias for gRPC stream");
     expect(markup).toContain("Checking the available stream sources…");
   });
 });

@@ -128,6 +128,7 @@ import {
   type WebRtcPublisherOptions,
 } from "./webrtc-publisher.ts";
 import {
+  isGrpcStreamMode,
   isStreamMode,
   STREAM_MODES,
   type StreamMode,
@@ -327,11 +328,11 @@ export async function startServer(
     );
   }
   if (
-    requestedDefaultStreamMode === "grpc-screenshot" &&
+    isGrpcStreamMode(requestedDefaultStreamMode) &&
     !/^emulator-\d+$/.test(opts.serial)
   ) {
     throw new Error(
-      "grpc-screenshot is available only for Android Emulator devices",
+      `${requestedDefaultStreamMode} is available only for Android Emulator devices`,
     );
   }
   const defaultStreamMode = requestedDefaultStreamMode;
@@ -1611,7 +1612,7 @@ export async function startServer(
     const requestedSerial = active.serial;
     if (!availableStreamModes(active.serial).includes(mode)) {
       throw new Error(
-        "grpc-screenshot is available only for Android Emulator devices",
+        `${mode} is available only for Android Emulator devices`,
       );
     }
     const context = await sessions.replace(
@@ -1786,11 +1787,11 @@ export async function startServer(
             );
           }
           if (
-            requestedMode === "grpc-screenshot" &&
+            isGrpcStreamMode(requestedMode) &&
             !/^emulator-\d+$/.test(requestContext.serial)
           ) {
             throw new Error(
-              "grpc-screenshot is available only for Android Emulator devices",
+              `${requestedMode} is available only for Android Emulator devices`,
             );
           }
           mode = requestedMode;

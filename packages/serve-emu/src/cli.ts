@@ -176,7 +176,7 @@ if (values.help) {
   console.log(`serve-emu — host an Android device over WebSocket/WebRTC
 
 Usage:
-  serve-emu [-p <port>] [--host <addr>] [--token <secret>] [-s <serial>] [--stream-mode <scrcpy|grpc-screenshot>] [--max-fps N] [--bit-rate N] [--max-size N] [--key-frame-interval sec] [--repeat-frame-ms ms]
+  serve-emu [-p <port>] [--host <addr>] [--token <secret>] [-s <serial>] [--stream-mode <scrcpy|grpc-screenshot|grpc-stream>] [--max-fps N] [--bit-rate N] [--max-size N] [--key-frame-interval sec] [--repeat-frame-ms ms]
   serve-emu --transport webrtc [--stun-url url[,url...]] [--turn-url url[,url...] --turn-username user --turn-credential pass]
   serve-emu --avd <name> [--restart-avd]
   serve-emu --avd-list
@@ -198,7 +198,7 @@ Options:
       --max-fps <n>      Cap source frame rate (default: ${SCRCPY_DEFAULTS.maxFps})
       --bit-rate <bps>   H.264 bit rate (default: ${SCRCPY_DEFAULTS.bitRate})
       --max-size <px>    Cap longest screen edge in pixels; 0 = native. The
-                         gRPC screenshot source uses host-side software H.264
+                         gRPC capture source uses host-side software H.264
                          encoding; ${SCRCPY_DEFAULTS.maxSize} balances detail and steady frame
                          delivery for either source.
       --key-frame-interval <sec>
@@ -211,10 +211,11 @@ Options:
                          screen change, so static screens keep producing frames
                          (16 ≈ steady 60fps at the cost of extra CPU/bandwidth;
                          0 keeps source defaults: scrcpy 100ms, gRPC 500ms)
-      --stream-mode <scrcpy|grpc-screenshot>
-                         Screen and input source (default: scrcpy). The gRPC
-                         screenshot source captures and encodes on the emulator
-                         host and is available only for Android Emulators.
+      --stream-mode <scrcpy|grpc-screenshot|grpc-stream>
+                         Screen and input source (default: scrcpy). grpc-stream
+                         uses the emulator's server-pushed streamScreenshot RPC;
+                         grpc-screenshot is its v0 compatibility alias. Both are
+                         available only for Android Emulators.
       --transport <websocket|webrtc>
                          Browser video transport (default: websocket)
       --stun-url <url[,url...]>
